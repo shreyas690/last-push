@@ -1,0 +1,21 @@
+{
+  "features": [
+    "packetSize",
+    "messageLength",
+    "encryptionTime",
+    "decryptionTime",
+    "sha3Verification",
+    "authTagValidation",
+    "nonceReused",
+    "replayCount",
+    "packetModified",
+    "failedLoginAttempts",
+    "packetInterval",
+    "connectionDuration"
+  ],
+  "classes": [
+    "ATTACK",
+    "BENIGN"
+  ],
+  "feature_count": 12
+}

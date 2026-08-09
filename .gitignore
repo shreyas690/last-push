@@ -1,0 +1,50 @@
+# Python virtual environment
+backend/venv/
+backend/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Node modules
+frontend/node_modules/
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# Trained AI model artifacts (large binary files)
+backend/models/*.pkl
+backend/models/*.json
+
+# Generated metrics / charts (auto-generated)
+backend/metrics/
+
+# Generated datasets from live communication logs
+backend/datasets/generated/
+backend/datasets/CIC-IDS2017/*.csv
+datasets/
+backend/datasets/
+
+# Generated security reports
+reports/
+
+# Environment files
+.env
+*.env
+backend/.env
+frontend/.env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
