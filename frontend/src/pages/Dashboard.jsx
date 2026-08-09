@@ -320,9 +320,8 @@ const Dashboard = () => {
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-hackerGreen/20 pb-4">
                             <div>
                                 <h2 className="text-lg font-bold text-hackerGreen glow-text-green flex items-center gap-2 uppercase tracking-wide">
-                                    <FiCpu /> OBJECTIVE 1 // AI Threat Detection & Continuous Learning
+                                    <FiCpu /> AI Threat Detection & Continuous Learning
                                 </h2>
-                                <p className="text-xs text-textMuted mt-1">Multi-model behavioral security guard trained on CIC-IDS2017 & live application log streams.</p>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 <button onClick={handleTrainModel} disabled={aiLoading} className="btn-secondary text-xs flex items-center gap-1.5">
@@ -396,9 +395,8 @@ const Dashboard = () => {
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-cyberRed/20 pb-4">
                             <div>
                                 <h2 className="text-lg font-bold text-cyberRed glow-text-red flex items-center gap-2 uppercase tracking-wide">
-                                    <FiShield /> OBJECTIVE 2 // Formal Security Evaluation & Penetration Testing
+                                    <FiShield /> Formal Security Evaluation & Penetration Testing
                                 </h2>
-                                <p className="text-xs text-textMuted mt-1">Controlled penetration testing framework evaluating Tampering, Replay, MITM, Auth, Integrity & Flooding.</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <label className="text-xs text-textMuted font-mono">Attempts / Category:</label>
