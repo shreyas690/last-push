@@ -4,32 +4,68 @@
 
 @layer base {
   body {
-    @apply bg-background text-textMain font-sans antialiased;
-    /* subtle background grid pattern */
+    @apply bg-background text-textMain font-mono antialiased selection:bg-hackerGreen selection:text-black;
     background-image: 
-      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
+      radial-gradient(ellipse at top, rgba(0, 255, 102, 0.08), transparent 70%),
+      linear-gradient(to right, rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 30px 30px, 30px 30px;
   }
 }
 
 @layer components {
   .glass-panel {
-    @apply bg-glass-gradient backdrop-blur-md border border-white/10 rounded-2xl shadow-glass;
+    @apply bg-surface/80 backdrop-blur-xl border border-hackerGreen/20 rounded-xl shadow-neon-green transition-all duration-300 hover:border-hackerGreen/40;
+  }
+  
+  .cyber-panel-cyan {
+    @apply bg-surface/80 backdrop-blur-xl border border-cyberCyan/20 rounded-xl shadow-neon-cyan transition-all duration-300 hover:border-cyberCyan/40;
+  }
+
+  .cyber-panel-red {
+    @apply bg-surface/80 backdrop-blur-xl border border-cyberRed/20 rounded-xl shadow-neon-red transition-all duration-300 hover:border-cyberRed/40;
   }
   
   .input-field {
-    @apply w-full bg-surface/50 border border-white/10 rounded-lg px-4 py-3 text-textMain 
-           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors;
+    @apply w-full bg-background/80 border border-hackerGreen/30 rounded-lg px-4 py-3 text-hackerGreen font-mono
+           focus:outline-none focus:border-hackerGreen focus:ring-1 focus:ring-hackerGreen transition-colors shadow-inner;
   }
   
   .btn-primary {
-    @apply bg-primary hover:bg-primaryDark text-white font-medium py-3 px-6 rounded-lg 
-           transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-primary/25;
+    @apply bg-hackerGreen/20 hover:bg-hackerGreen hover:text-black border border-hackerGreen text-hackerGreen font-mono font-bold py-2.5 px-5 rounded-lg 
+           transition-all duration-300 shadow-neon-green transform hover:-translate-y-0.5 active:translate-y-0;
   }
   
   .btn-secondary {
-    @apply bg-surface hover:bg-white/5 border border-white/10 text-textMain font-medium 
-           py-3 px-6 rounded-lg transition-all duration-300;
+    @apply bg-cyberCyan/10 hover:bg-cyberCyan hover:text-black border border-cyberCyan text-cyberCyan font-mono font-bold py-2.5 px-5 rounded-lg 
+           transition-all duration-300 shadow-neon-cyan;
   }
+
+  .btn-danger {
+    @apply bg-cyberRed/20 hover:bg-cyberRed hover:text-white border border-cyberRed text-cyberRed font-mono font-bold py-2.5 px-5 rounded-lg 
+           transition-all duration-300 shadow-neon-red;
+  }
+}
+
+/* Hacker simulator CRT scanline effect */
+.crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Glowing text effects */
+.glow-text-green {
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.7);
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+}
+
+.glow-text-red {
+  text-shadow: 0 0 10px rgba(255, 0, 85, 0.7);
 }

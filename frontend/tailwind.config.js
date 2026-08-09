@@ -7,24 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0a0a0f',
-        surface: '#13131f',
-        primary: '#3b82f6',
-        primaryDark: '#2563eb',
-        accent: '#10b981',
-        danger: '#ef4444',
-        textMain: '#f3f4f6',
-        textMuted: '#9ca3af'
+        background: '#040d1a',
+        surface: '#0a192f',
+        hackerGreen: '#00ff66',
+        cyberCyan: '#00f3ff',
+        cyberRed: '#ff0055',
+        primary: '#00ff66',
+        primaryDark: '#00cc52',
+        accent: '#00f3ff',
+        danger: '#ff0055',
+        textMain: '#e6f1ff',
+        textMuted: '#8892b0'
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        mono: ['Fira Code', 'monospace']
+        mono: ['Fira Code', 'JetBrains Mono', 'monospace']
       },
       backgroundImage: {
-        'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
+        'glass-gradient': 'linear-gradient(135deg, rgba(0, 255, 102, 0.05) 0%, rgba(0, 243, 255, 0.02) 100%)',
+        'hacker-grid': 'linear-gradient(to right, rgba(0, 255, 102, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 255, 102, 0.05) 1px, transparent 1px)'
       },
       boxShadow: {
-        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+        'glass': '0 4px 30px rgba(0, 0, 0, 0.5)',
+        'neon-green': '0 0 15px rgba(0, 255, 102, 0.3)',
+        'neon-cyan': '0 0 15px rgba(0, 243, 255, 0.3)',
+        'neon-red': '0 0 15px rgba(255, 0, 85, 0.3)'
       }
     },
   },
