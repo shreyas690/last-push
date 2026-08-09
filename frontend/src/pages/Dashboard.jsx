@@ -315,7 +315,7 @@ const Dashboard = () => {
                         <StatCard icon={<FiCpu />} title="Communication Logs" value={aiMetrics?.totalCommunicationLogs || 0} color="text-hackerGreen" cardBorder="border-hackerGreen/30" />
                     </div>
 
-                    {/* OBJECTIVE 1 — AI THREAT DETECTION & CONTINUOUS LEARNING */}
+                    {/* AI THREAT DETECTION & CONTINUOUS LEARNING */}
                     <div className="glass-panel p-6 mb-8 border border-hackerGreen/30 shadow-neon-green">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-hackerGreen/20 pb-4">
                             <div>
@@ -390,7 +390,7 @@ const Dashboard = () => {
                         )}
                     </div>
 
-                    {/* OBJECTIVE 2 — FORMAL SECURITY EVALUATION & PENETRATION TESTING FRAMEWORK */}
+                    {/* FORMAL SECURITY EVALUATION & PENETRATION TESTING FRAMEWORK */}
                     <div className="cyber-panel-red p-6 mb-8 border border-cyberRed/30 shadow-neon-red">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-cyberRed/20 pb-4">
                             <div>
