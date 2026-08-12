@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   FiActivity, FiUsers, FiShield, FiAlertTriangle, FiCheckCircle, FiCheck, FiX, 
-  FiCpu, FiDatabase, FiRefreshCw, FiBarChart2, FiPlay, FiTerminal, FiLock, FiRadio 
+  FiCpu, FiDatabase, FiRefreshCw, FiBarChart2, FiPlay, FiTerminal, FiLock, FiRadio, FiUpload 
 } from 'react-icons/fi';
 import api from '../services/api';
 import socket from '../services/socket';
@@ -72,13 +72,14 @@ const Dashboard = () => {
     const [encryptionHistory, setEncryptionHistory] = useState([0, 0, 0, 0, 0, 0, 0]);
     const [processingUsers, setProcessingUsers] = useState({});
     
-    // Objective 1 State
+    // AI Threat Detection State
     const [aiMetrics, setAiMetrics] = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
     const [activeModalImage, setActiveModalImage] = useState(null);
     const [aiActionMessage, setAiActionMessage] = useState('');
+    const [uploadingDataset, setUploadingDataset] = useState(false);
 
-    // Objective 2 State
+    // Controlled Security Evaluation State
     const [secScale, setSecScale] = useState(100);
     const [secTestRunning, setSecTestRunning] = useState(false);
     const [secLiveProgress, setSecLiveProgress] = useState(null);
@@ -177,15 +178,45 @@ const Dashboard = () => {
         }
     };
 
+    const handleImportDataset = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.name.endsWith('.csv')) {
+            alert("Only CSV files are supported for CIC-IDS2017 import.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setUploadingDataset(true);
+        setAiActionMessage(`Uploading & validating ${file.name}...`);
+
+        try {
+            const res = await api.post('/ai/import-dataset', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            alert(res.data.message);
+            await fetchAiMetrics();
+        } catch (err) {
+            alert(err.response?.data?.error || "Dataset import failed.");
+        } finally {
+            setUploadingDataset(false);
+            setAiActionMessage('');
+            e.target.value = null; // Reset input
+        }
+    };
+
     const handleTrainModel = async () => {
         setAiLoading(true);
-        setAiActionMessage('Initializing multi-model AI suite training...');
+        setAiActionMessage('Training 4 ML Classifiers (Random Forest, XGBoost, LightGBM, Extra Trees) on real dataset...');
         try {
             const res = await api.post('/ai/train');
             alert(res.data.message);
             await fetchAiMetrics();
         } catch (err) {
-            alert(err.response?.data?.error || "Training failed.");
+            alert(err.response?.data?.error || "Training failed. Please provide CIC-IDS2017 dataset first.");
         } finally {
             setAiLoading(false);
             setAiActionMessage('');
@@ -194,10 +225,10 @@ const Dashboard = () => {
 
     const handleRetrainModel = async () => {
         setAiLoading(true);
-        setAiActionMessage('Executing continuous learning retrain workflow...');
+        setAiActionMessage('Executing continuous learning retrain workflow on real application logs...');
         try {
             const res = await api.post('/ai/retrain');
-            alert(res.data.message);
+            alert(res.data.message || res.data.status);
             await fetchAiMetrics();
         } catch (err) {
             alert(err.response?.data?.error || "Retraining failed.");
@@ -264,6 +295,9 @@ const Dashboard = () => {
     };
 
     const activeVersion = aiMetrics?.activeVersion;
+    const evalReport = aiMetrics?.evaluationReport;
+    const modelComparison = evalReport?.comparison || {};
+    const importedDatasets = aiMetrics?.importedDatasets || [];
 
     return (
         <div className="min-h-screen p-6 relative">
@@ -324,65 +358,125 @@ const Dashboard = () => {
                                 </h2>
                             </div>
                             <div className="flex flex-wrap gap-2">
-                                <button onClick={handleTrainModel} disabled={aiLoading} className="btn-secondary text-xs flex items-center gap-1.5">
-                                    <FiRefreshCw className={aiLoading ? "animate-spin" : ""} /> Train AI Suite
+                                <label className="btn-secondary text-xs flex items-center gap-1.5 cursor-pointer">
+                                    <FiUpload /> Import CIC-IDS2017 Dataset
+                                    <input type="file" accept=".csv" onChange={handleImportDataset} className="hidden" disabled={uploadingDataset} />
+                                </label>
+                                <button onClick={handleTrainModel} disabled={aiLoading} className="btn-primary text-xs flex items-center gap-1.5">
+                                    <FiRefreshCw className={aiLoading ? "animate-spin" : ""} /> Train 4 Classifiers
                                 </button>
-                                <button onClick={handleRetrainModel} disabled={aiLoading} className="btn-primary text-xs flex items-center gap-1.5">
+                                <button onClick={handleRetrainModel} disabled={aiLoading} className="btn-secondary text-xs flex items-center gap-1.5">
                                     <FiRefreshCw className={aiLoading ? "animate-spin" : ""} /> Continuous Retrain
                                 </button>
                                 <button onClick={handleExportDataset} className="btn-secondary text-xs flex items-center gap-1.5">
-                                    <FiDatabase /> Export Dataset
+                                    <FiDatabase /> Export App Logs
                                 </button>
                             </div>
                         </div>
 
                         {aiActionMessage && <div className="text-xs text-hackerGreen bg-hackerGreen/10 border border-hackerGreen/30 p-3 rounded-lg mb-4 animate-pulse">{aiActionMessage}</div>}
 
-                        {activeVersion ? (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 font-mono text-xs">
-                                <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
-                                    <span className="text-[10px] text-textMuted uppercase block">Active Model</span>
-                                    <span className="text-sm font-bold text-hackerGreen truncate block">{activeVersion.model_type}</span>
-                                </div>
-                                <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
-                                    <span className="text-[10px] text-textMuted uppercase block">Version</span>
-                                    <span className="text-sm font-bold text-cyberCyan block">{activeVersion.version}</span>
-                                </div>
-                                <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
-                                    <span className="text-[10px] text-textMuted uppercase block">Accuracy</span>
-                                    <span className="text-sm font-bold text-hackerGreen block">{(activeVersion.accuracy * 100).toFixed(1)}%</span>
-                                </div>
-                                <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
-                                    <span className="text-[10px] text-textMuted uppercase block">F1 Score</span>
-                                    <span className="text-sm font-bold text-hackerGreen block">{(activeVersion.f1_score * 100).toFixed(1)}%</span>
-                                </div>
-                                <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
-                                    <span className="text-[10px] text-textMuted uppercase block">Recall</span>
-                                    <span className="text-sm font-bold text-cyberCyan block">{(activeVersion.recall * 100).toFixed(1)}%</span>
-                                </div>
-                                <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
-                                    <span className="text-[10px] text-textMuted uppercase block">ROC-AUC</span>
-                                    <span className="text-sm font-bold text-cyberCyan block">{(activeVersion.roc_auc * 100).toFixed(1)}%</span>
+                        {/* Imported Datasets List */}
+                        {importedDatasets.length > 0 && (
+                            <div className="mb-6 p-4 bg-background/90 rounded-lg border border-hackerGreen/20">
+                                <h4 className="text-xs font-bold text-cyberCyan font-mono uppercase mb-2">Imported Datasets ({importedDatasets.length})</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                                    {importedDatasets.map((ds, idx) => (
+                                        <div key={idx} className="p-2.5 bg-surface/80 rounded border border-white/5 font-mono text-[11px]">
+                                            <div className="font-bold text-hackerGreen truncate">{ds.filename}</div>
+                                            <div className="text-textMuted">{ds.rowCount} rows | {ds.columnCount} columns | {ds.duplicateRows} duplicates</div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
+                        )}
+
+                        {activeVersion ? (
+                            <>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 font-mono text-xs">
+                                    <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
+                                        <span className="text-[10px] text-textMuted uppercase block">Deployed Model</span>
+                                        <span className="text-sm font-bold text-hackerGreen truncate block">{activeVersion.model_type}</span>
+                                    </div>
+                                    <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
+                                        <span className="text-[10px] text-textMuted uppercase block">Version</span>
+                                        <span className="text-sm font-bold text-cyberCyan block">{activeVersion.version}</span>
+                                    </div>
+                                    <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
+                                        <span className="text-[10px] text-textMuted uppercase block">Accuracy</span>
+                                        <span className="text-sm font-bold text-hackerGreen block">{(activeVersion.accuracy * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
+                                        <span className="text-[10px] text-textMuted uppercase block">F1 Score</span>
+                                        <span className="text-sm font-bold text-hackerGreen block">{(activeVersion.f1_score * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
+                                        <span className="text-[10px] text-textMuted uppercase block">Recall</span>
+                                        <span className="text-sm font-bold text-cyberCyan block">{(activeVersion.recall * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="bg-background/80 p-3 rounded-lg border border-hackerGreen/20">
+                                        <span className="text-[10px] text-textMuted uppercase block">ROC-AUC</span>
+                                        <span className="text-sm font-bold text-cyberCyan block">{(activeVersion.roc_auc * 100).toFixed(1)}%</span>
+                                    </div>
+                                </div>
+
+                                {/* Dynamic 4-Classifier Comparison Table */}
+                                {Object.keys(modelComparison).length > 0 && (
+                                    <div className="mb-6 overflow-x-auto">
+                                        <h4 className="text-xs font-bold text-hackerGreen font-mono uppercase mb-3">Classifier Suite Evaluation Comparison</h4>
+                                        <table className="w-full text-left border-collapse font-mono text-xs">
+                                            <thead>
+                                                <tr className="border-b border-hackerGreen/20 text-textMuted text-[11px] uppercase">
+                                                    <th className="p-2">Model Algorithm</th>
+                                                    <th className="p-2">Accuracy</th>
+                                                    <th className="p-2">Precision</th>
+                                                    <th className="p-2">Recall</th>
+                                                    <th className="p-2">F1 Score</th>
+                                                    <th className="p-2">ROC-AUC</th>
+                                                    <th className="p-2">Train Time</th>
+                                                    <th className="p-2">Pred Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {Object.entries(modelComparison).map(([mName, mData], idx) => (
+                                                    <tr key={idx} className={`border-b border-white/5 ${mName === evalReport?.best_model_name ? 'bg-hackerGreen/10 font-bold text-hackerGreen' : 'text-textMuted'}`}>
+                                                        <td className="p-2 font-bold text-white flex items-center gap-1.5">
+                                                            {mName} {mName === evalReport?.best_model_name && <span className="text-[10px] bg-hackerGreen text-black px-1.5 py-0.5 rounded font-bold">BEST</span>}
+                                                        </td>
+                                                        <td className="p-2">{(mData.accuracy * 100).toFixed(1)}%</td>
+                                                        <td className="p-2">{(mData.precision * 100).toFixed(1)}%</td>
+                                                        <td className="p-2">{(mData.recall * 100).toFixed(1)}%</td>
+                                                        <td className="p-2">{(mData.f1_score * 100).toFixed(1)}%</td>
+                                                        <td className="p-2">{(mData.roc_auc * 100).toFixed(1)}%</td>
+                                                        <td className="p-2">{mData.train_time_sec}s</td>
+                                                        <td className="p-2">{mData.prediction_time_sec}s</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </>
                         ) : (
-                            <div className="text-center p-4 text-textMuted text-xs font-mono">No trained model loaded. Click "Train AI Suite" to generate model versioning.</div>
+                            <div className="text-center p-6 bg-background/60 rounded-lg border border-yellow-400/30 text-yellow-400 text-xs font-mono">
+                                No training dataset available. Please provide CIC-IDS2017 data by clicking "Import CIC-IDS2017 Dataset" above.
+                            </div>
                         )}
 
                         {aiMetrics?.images && (
                             <div className="flex flex-wrap gap-3 border-t border-hackerGreen/20 pt-4">
                                 {aiMetrics.images.confusionMatrix && (
-                                    <button onClick={() => setActiveModalImage({ title: "Confusion Matrix Plot", src: `data:image/png;base64,${aiMetrics.images.confusionMatrix}` })} className="btn-secondary text-xs flex items-center gap-2">
+                                    <button onClick={() => setActiveModalImage({ title: "Real Confusion Matrix", src: `data:image/png;base64,${aiMetrics.images.confusionMatrix}` })} className="btn-secondary text-xs flex items-center gap-2">
                                         <FiBarChart2 className="text-cyberCyan"/> Confusion Matrix
                                     </button>
                                 )}
                                 {aiMetrics.images.rocCurve && (
-                                    <button onClick={() => setActiveModalImage({ title: "ROC Curve Analysis", src: `data:image/png;base64,${aiMetrics.images.rocCurve}` })} className="btn-secondary text-xs flex items-center gap-2">
+                                    <button onClick={() => setActiveModalImage({ title: "Multi-Class ROC Curve Analysis", src: `data:image/png;base64,${aiMetrics.images.rocCurve}` })} className="btn-secondary text-xs flex items-center gap-2">
                                         <FiBarChart2 className="text-cyberCyan"/> ROC Curve
                                     </button>
                                 )}
                                 {aiMetrics.images.featureImportance && (
-                                    <button onClick={() => setActiveModalImage({ title: "Feature Importance Ranking", src: `data:image/png;base64,${aiMetrics.images.featureImportance}` })} className="btn-secondary text-xs flex items-center gap-2">
+                                    <button onClick={() => setActiveModalImage({ title: "Real Feature Importance Ranking", src: `data:image/png;base64,${aiMetrics.images.featureImportance}` })} className="btn-secondary text-xs flex items-center gap-2">
                                         <FiBarChart2 className="text-cyberCyan"/> Feature Importance
                                     </button>
                                 )}
@@ -476,7 +570,7 @@ const Dashboard = () => {
                             <Line options={chartOptions} data={performanceData} />
                         </div>
                         
-                        {/* Pending Approvals Table (NO EMOJIS, CLEAN SVG ICONS & STYLED BUTTONS) */}
+                        {/* Pending Approvals Table */}
                         <div className="glass-panel p-6 flex flex-col">
                             <h3 className="text-md font-bold text-yellow-400 mb-4 flex justify-between items-center font-mono uppercase tracking-wide">
                                 Pending User Access Requests

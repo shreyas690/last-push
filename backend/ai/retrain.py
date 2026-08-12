@@ -24,16 +24,18 @@ def execute_continuous_learning_retrain():
     export_result = export_communication_logs_to_csv()
     logger.info(f"Dataset export result: {export_result}")
     
-    # 2. Get current active version metrics
+    # 2. Train & select candidate model
+    new_report = train_and_select_best_model()
+    if "error" in new_report:
+        return {"error": new_report["error"], "status": "Failed"}
+
     current_active = ModelManager.get_current_active_version()
     current_f1 = current_active.get("f1_score", 0.0) if current_active else 0.0
     
-    # 3. Train & select candidate model
-    new_report = train_and_select_best_model()
     new_metrics = new_report.get("metrics", {})
     new_f1 = new_metrics.get("f1_score", 0.0)
     
-    # 4. Compare performance
+    # 3. Compare performance
     is_improved = (new_f1 >= current_f1) or (current_active is None)
     
     if is_improved:

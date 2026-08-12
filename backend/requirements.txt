@@ -13,6 +13,7 @@ gevent-websocket
 pandas
 numpy
 xgboost
+lightgbm
 joblib
 matplotlib
 seaborn
