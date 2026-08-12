@@ -21,6 +21,22 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, password, isAdmin = false) => {
         const endpoint = isAdmin ? '/auth/admin/login' : '/auth/login';
         const response = await api.post(endpoint, { username, password });
+        
+        // If regular user requires face verification step
+        if (response.data.requiresFaceVerification) {
+            return response.data;
+        }
+
+        const { access_token, user } = response.data;
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+        socket.connect();
+        return { user, success: true };
+    };
+
+    const verifyFace = async (username, faceData) => {
+        const response = await api.post('/auth/verify-face', { username, faceData });
         const { access_token, user } = response.data;
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
@@ -29,8 +45,15 @@ export const AuthProvider = ({ children }) => {
         return user;
     };
 
-    const register = async (username, password, role) => {
-        await api.post('/auth/register', { username, password, role });
+    const register = async (username, password, email, faceData, role = "User") => {
+        const response = await api.post('/auth/register', {
+            username,
+            password,
+            email,
+            faceData,
+            role
+        });
+        return response.data;
     };
 
     const logout = () => {
@@ -41,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, verifyFace, register, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

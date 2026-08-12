@@ -12,3 +12,13 @@ class Config:
     AES_KEY_SIZE = 32 # 256 bits
     NONCE_SIZE = 12 # 96 bits for GCM
     TAG_SIZE = 16 # 128 bits for GCM
+
+    # Gmail SMTP Notification configuration
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'eventnov22@gmail.com')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() == 'true'
+
+    # Biometric Face Recognition configuration
+    FACE_MATCH_THRESHOLD = float(os.environ.get('FACE_MATCH_THRESHOLD', '0.6'))

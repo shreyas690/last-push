@@ -491,10 +491,11 @@ const Dashboard = () => {
                                     <thead>
                                         <tr className="border-b border-white/10 text-textMuted text-[11px] uppercase">
                                             <th className="p-2.5">Username</th>
-                                            <th className="p-2.5">Email</th>
-                                            <th className="p-2.5">Role</th>
+                                            <th className="p-2.5">Gmail Address</th>
+                                            <th className="p-2.5">Face Status</th>
                                             <th className="p-2.5">Registration Time (IST)</th>
-                                            <th className="p-2.5">Status</th>
+                                            <th className="p-2.5">Approval Status</th>
+                                            <th className="p-2.5">Email Status</th>
                                             <th className="p-2.5">Action Controls</th>
                                         </tr>
                                     </thead>
@@ -503,9 +504,14 @@ const Dashboard = () => {
                                             <tr key={u._id} className="border-b border-white/5 hover:bg-white/5">
                                                 <td className="p-2.5 font-bold text-white">{u.username}</td>
                                                 <td className="p-2.5 text-textMuted">{u.email}</td>
-                                                <td className="p-2.5 text-cyberCyan">{u.role}</td>
+                                                <td className="p-2.5">
+                                                    <span className="text-[11px] bg-hackerGreen/10 border border-hackerGreen/40 text-hackerGreen px-2 py-0.5 rounded">
+                                                        Registered
+                                                    </span>
+                                                </td>
                                                 <td className="p-2.5 text-textMuted text-[11px]">{formatISTDate(u.createdAt)}</td>
                                                 <td className="p-2.5 text-yellow-400">{u.status}</td>
+                                                <td className="p-2.5 text-textMuted">{u.emailNotificationStatus || "Pending"}</td>
                                                 <td className="p-2.5">
                                                     <div className="flex gap-2">
                                                         <button 
@@ -529,7 +535,7 @@ const Dashboard = () => {
                                             </tr>
                                         )) : (
                                             <tr>
-                                                <td colSpan="6" className="p-4 text-center text-textMuted font-mono">No pending authorization requests in queue.</td>
+                                                <td colSpan="7" className="p-4 text-center text-textMuted font-mono">No pending authorization requests in queue.</td>
                                             </tr>
                                         )}
                                     </tbody>
