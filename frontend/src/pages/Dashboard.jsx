@@ -316,8 +316,14 @@ const Dashboard = () => {
                 {/* Telemetry Status Badges */}
                 <div className="flex flex-wrap gap-2 text-[11px] font-mono">
                     <span className="bg-hackerGreen/10 border border-hackerGreen/40 text-hackerGreen px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-neon-green">
-                        <span className="w-2 h-2 rounded-full bg-hackerGreen animate-ping"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-hackerGreen animate-ping"></span>
                         SYS.STATUS: ONLINE
+                    </span>
+                    <span className="bg-cyberCyan/10 border border-cyberCyan/40 text-cyberCyan px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full border border-cyberCyan relative overflow-hidden flex items-center justify-center">
+                            <span className="absolute w-full h-full bg-gradient-to-tr from-transparent via-transparent to-cyberCyan animate-radar-sweep rounded-full"></span>
+                        </span>
+                        SOC RADAR: SCANNING
                     </span>
                     <span className="bg-cyberCyan/10 border border-cyberCyan/40 text-cyberCyan px-2.5 py-1 rounded-md flex items-center gap-1">
                         <FiLock className="text-xs" /> ENCRYPTION: AES-256-GCM

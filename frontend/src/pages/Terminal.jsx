@@ -371,18 +371,45 @@ const Terminal = () => {
                             )}
 
                             {!isManualMorse && (
-                                <div className="bg-surface/30 p-4 rounded-lg border border-primary/20 shadow-inner">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm text-text-muted">Morse Translation (Pre-Encryption):</span>
-                                        <button onClick={() => setMorsePreview(encodeMorse(inputText))} className="text-xs bg-primary/20 text-primary px-2 py-1 rounded hover:bg-primary/40">Convert to Morse</button>
+                                <div className="bg-surface/50 p-4 rounded-xl border border-hackerGreen/30 shadow-inner">
+                                    <div className="flex justify-between items-center mb-2 font-mono">
+                                        <span className="text-xs text-textMuted uppercase flex items-center gap-2">
+                                            <FiRadio className="text-hackerGreen animate-pulse" /> Morse Translation (CW Frequency: 650Hz):
+                                        </span>
+                                        <button onClick={() => setMorsePreview(encodeMorse(inputText))} className="btn-secondary text-[11px] py-1 px-3">Convert to Morse</button>
                                     </div>
-                                    <span className="font-mono text-primary tracking-widest break-all">{morsePreview || '...'}</span>
+                                    <span className="font-mono text-hackerGreen tracking-widest break-all glow-text-green text-sm block mb-3">{morsePreview || '...'}</span>
+
+                                    {/* Live Morse Signal Audio Waveform Animation Bars */}
+                                    {morsePreview && (
+                                        <div className="flex items-center gap-1.5 py-2 px-3 bg-background/80 rounded-lg border border-hackerGreen/20">
+                                            <span className="text-[10px] text-textMuted font-mono uppercase mr-2">CW SIGNAL WAVEFORM:</span>
+                                            <div className="w-1.5 bg-hackerGreen rounded-full animate-morse-pulse-1"></div>
+                                            <div className="w-1.5 bg-hackerGreen rounded-full animate-morse-pulse-2"></div>
+                                            <div className="w-1.5 bg-hackerGreen rounded-full animate-morse-pulse-3"></div>
+                                            <div className="w-1.5 bg-hackerGreen rounded-full animate-morse-pulse-4"></div>
+                                            <div className="w-1.5 bg-hackerGreen rounded-full animate-morse-pulse-1"></div>
+                                            <div className="w-1.5 bg-hackerGreen rounded-full animate-morse-pulse-3"></div>
+                                            <span className="text-[10px] text-hackerGreen font-mono ml-auto">SIGNAL STRENGTH: 98%</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
                             {morsePreview && (
                                 <MorseAudioControls morseCode={morsePreview} />
                             )}
+
+                            {/* Post-Quantum Kyber Key Exchange Stream Animation */}
+                            <div className="p-3 bg-surface/80 rounded-xl border border-cyberCyan/30 font-mono text-xs kyber-shimmer-bg">
+                                <div className="flex justify-between items-center text-cyberCyan font-bold mb-1 text-[11px]">
+                                    <span className="flex items-center gap-1.5"><FiLock /> PQC HANDSHAKE ENCODING</span>
+                                    <span>KYBER-512 KEM // AES-256-GCM</span>
+                                </div>
+                                <div className="text-[10px] text-textMuted truncate">
+                                    Derived Key Digest: <span className="text-hackerGreen">sha3_512(X25519_shared_secret + kyber_ciphertext)</span>
+                                </div>
+                            </div>
 
                             <div className="pt-4 flex gap-4">
                                 <button onClick={() => {
